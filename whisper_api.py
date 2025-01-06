@@ -1,5 +1,7 @@
 import openai
 import bentoml
+import time
+import json
 
 AUDIO_PATH = 'example_data/example_audio.mp3'
 AUDIO_GERMAN_PATH = 'example_data/example_audio_german.mp3'
@@ -10,22 +12,44 @@ def bento_transcribe():
     with bentoml.SyncHTTPClient(API_URL) as client:
         if client.is_ready():
             transcription = client.transcribe(file=AUDIO_PATH)
+            transcription = json.loads(transcription)
             print(transcription["text"])
 
 def bento_transcribe_stream():
-    pass
+    with bentoml.SyncHTTPClient(API_URL) as client:
+        if client.is_ready():
+            for chunk in client.streaming_transcribe(file=AUDIO_PATH):
+                print(chunk)
 
 def bento_transcribe_task():
-    pass
+    with bentoml.SyncHTTPClient(API_URL) as client:
+        if client.is_ready():
+            task = client.task_transcribe.submit(file=AUDIO_PATH)
+            print("Task submitted, ID: ", task.id)
+
+            done = False
+            while not done:
+                status = task.get_status()
+                if status.value == "success":
+                    print("The task runs successfully. The result is: ")
+                    transcription = json.loads(task.get())
+                    print(transcription["text"])
+                    done = True
+                elif status.value == "failure":
+                    print("The task run failed.")
+                    done = True
+                else:
+                    print("The task is still running.")
+                    time.sleep(5)
+                
 
 def bento_translate():
-    pass
+    with bentoml.SyncHTTPClient(API_URL) as client:
+        if client.is_ready():
+            translation = client.translate(file=AUDIO_GERMAN_PATH)
+            translation = json.loads(translation)
+            print(translation["text"])
 
-def bento_get_models():
-    pass
-
-def bento_get_model():
-    pass
 
 def openai_transcribe():
     audio_file= open(AUDIO_PATH, "rb")
@@ -35,4 +59,7 @@ def openai_transcribe():
 
 if __name__ == "__main__":
     bento_transcribe()
+    bento_transcribe_stream()
+    bento_transcribe_task()
+    bento_translate()
     openai_transcribe()
