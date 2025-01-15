@@ -7,6 +7,7 @@ Additionaly, there is a starter code for interacting with an embeddings API.
 
 * **embeddings_api.py:**  Example usage of a BentoML API for generating embeddings from text.
 * **whisper_api.py:** Example usage of a BentoML API for transcribing and translating audio files using OpenAI's Whisper model.
+* **llm_*.py:** Example usage of a BentoML API for vLLM LLMs.
 * **pyproject.toml:** Project dependencies.
 * **LICENSE:** MIT License file.
 
@@ -18,6 +19,7 @@ Additionaly, there is a starter code for interacting with an embeddings API.
 2. **Run the example scripts:**
    - Execute `uv run embeddings_api.py` to see how to generate embeddings and perform reranking with the BentoML API.
    - Execute `uv run whisper_api.py` to see how to transcribe and translate audio files using the BentoML API.
+   - Execute `uv run llm.py` to see how to interact with vllm served over BentoML.
 
 ## Features
 
@@ -32,6 +34,11 @@ Additionaly, there is a starter code for interacting with an embeddings API.
     * `bento_transcribe_task()`: Transcribes an audio file using asynchronous tasks.
     * `bento_translate()`: Translates an audio file.
     * `openai_transcribe()`:  Shows how to directly use the OpenAI API for transcription (for comparison).
+
+* **llm_*.py**
+    * `llm.py`: Chat and generation usage with OpenAI
+    * `llm_structured_output.py`: Showcase for different structured output generation, such as regex, EBNF grammar or JSON
+    * `llm_too_use.py`: Showcase for LLM with tool use.
 
 ## Notes
 
