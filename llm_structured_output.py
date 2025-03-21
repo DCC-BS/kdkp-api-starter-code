@@ -2,8 +2,10 @@ from enum import Enum
 
 from openai import OpenAI
 from pydantic import BaseModel
+import truststore
 
-MODEL_ID = "amd/Llama-3.3-70B-Instruct-FP8-KV"
+truststore.inject_into_ssl()
+
 API_URL = "http://localhost:9001/v1"
 
 client = OpenAI(
@@ -11,7 +13,12 @@ client = OpenAI(
     api_key="token-abc123",
 )
 
+def _get_model_id() -> str:
+    models = client.models.list()
+    return models.data[0].id
+
 def structured_output_decode_by_choice():
+    MODEL_ID = _get_model_id()
     completion = client.chat.completions.create(
         model=MODEL_ID,
         messages=[
@@ -23,6 +30,7 @@ def structured_output_decode_by_choice():
 
 
 def structured_output_decode_by_regex():
+    MODEL_ID = _get_model_id()
     prompt = (
         "Generate an email address for Alan Turing, who works in Enigma."
         "End in .com and new line. Example result:"
@@ -43,6 +51,7 @@ def structured_output_decode_by_regex():
 
 
 def structured_output_json():
+    MODEL_ID = _get_model_id()
     class CarType(str, Enum):
         sedan = "sedan"
         suv = "SUV"
@@ -74,6 +83,7 @@ def structured_output_json():
 
 
 def structured_output_decode_by_grammar():
+    MODEL_ID = _get_model_id()
     """It works by using a context free EBNF grammar"""
     simplified_sql_grammar = """
         ?start: select_statement

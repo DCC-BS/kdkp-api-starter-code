@@ -1,8 +1,9 @@
 
 from openai import OpenAI
+import truststore
 
+truststore.inject_into_ssl()
 
-MODEL_ID = "amd/Llama-3.3-70B-Instruct-FP8-KV"
 API_URL = "http://localhost:9001/v1"
 
 client = OpenAI(
@@ -10,6 +11,8 @@ client = OpenAI(
     api_key="token-abc123",
 )
 
+models = client.models.list()
+MODEL_ID = models.data[0].id
 
 def completition_chat():
     completion = client.chat.completions.create(

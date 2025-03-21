@@ -1,6 +1,9 @@
 import json
 
 from openai import OpenAI
+import truststore
+
+truststore.inject_into_ssl()
 
 openai_api_key = "EMPTY"
 openai_api_base = "http://localhost:9001/v1"

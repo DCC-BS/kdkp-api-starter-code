@@ -2,6 +2,9 @@ import openai
 import bentoml
 import time
 import json
+import truststore
+
+truststore.inject_into_ssl()
 
 AUDIO_PATH = 'example_data/example_audio.mp3'
 AUDIO_GERMAN_PATH = 'example_data/example_audio_german.mp3'

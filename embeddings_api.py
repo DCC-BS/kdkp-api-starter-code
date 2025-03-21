@@ -1,6 +1,9 @@
 import bentoml
 import numpy as np
 import typing as t
+import truststore
+
+truststore.inject_into_ssl()
 
 API_URL = 'http://localhost:50001'
 
