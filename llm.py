@@ -1,18 +1,20 @@
+import os
 
-from openai import OpenAI
 import truststore
+from openai import OpenAI
 
 truststore.inject_into_ssl()
 
-API_URL = "http://localhost:9001/v1"
-
+API_URL = "http://localhost:8000/v1"
+api_key = "{}".format(os.environ.get("API_KEY", "0"))
 client = OpenAI(
     base_url=API_URL,
-    api_key="token-abc123",
+    api_key=api_key,
 )
 
 models = client.models.list()
 MODEL_ID = models.data[0].id
+
 
 def completition_chat():
     completion = client.chat.completions.create(
