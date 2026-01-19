@@ -1,21 +1,22 @@
+import os
 from enum import Enum
 
+import truststore
 from openai import OpenAI
 from pydantic import BaseModel
-import truststore
 
 truststore.inject_into_ssl()
 
-API_URL = "http://localhost:9001/v1"
+api_key = "{}".format(os.environ.get("API_KEY", "0"))
+api_url = "http://localhost:8000/v1"
 
-client = OpenAI(
-    base_url=API_URL,
-    api_key="token-abc123",
-)
+client = OpenAI(api_key=api_key, base_url=api_url)
+
 
 def _get_model_id() -> str:
     models = client.models.list()
     return models.data[0].id
+
 
 def structured_output_decode_by_choice():
     MODEL_ID = _get_model_id()
@@ -52,6 +53,7 @@ def structured_output_decode_by_regex():
 
 def structured_output_json():
     MODEL_ID = _get_model_id()
+
     class CarType(str, Enum):
         sedan = "sedan"
         suv = "SUV"
@@ -114,6 +116,7 @@ def structured_output_decode_by_grammar():
         extra_body={"guided_grammar": simplified_sql_grammar},
     )
     print(completion.choices[0].message.content)
+
 
 if __name__ == "__main__":
     structured_output_decode_by_choice()

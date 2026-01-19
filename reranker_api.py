@@ -1,11 +1,13 @@
 import os
 
 import truststore
-from openai import OpenAI
 
 from utils.get_model import get_model_id
 
 truststore.inject_into_ssl()
+import json
+
+import requests
 
 DOCUMENTS = [
     "This is an example sentence. It is used for testing purposes. It has no real meaning.",
@@ -19,31 +21,37 @@ DOCUMENTS = [
     "I'm reading a great book right now. It's a mystery novel with a lot of twists and turns. I can't wait to see how it ends.",
     "I'm planning a trip to Europe next year. I'm going to visit several different countries. I'm really looking forward to it.",
 ]
-QUERIES = [
-    "What is machine learning?",
-    "Tell me about Python.",
-    "Sports and hobbies",
-    "Weather forecast",
-]
+QUERY = "What is machine learning?"
 
 api_key = "{}".format(os.environ.get("API_KEY", "0"))
-api_url = "http://localhost:8000/v1"
-client = OpenAI(api_key=api_key, base_url=api_url)
-model_id = get_model_id(api_key=api_key, api_url=api_url)
+api_url = "http://localhost:8000/rerank"
+openai_api_url = api_url.replace("/rerank", "/v1")
+model_id = get_model_id(api_key=api_key, api_url=openai_api_url)
+print(model_id)
 
 
-def encode_documents():
-    client = OpenAI(api_key=api_key, base_url=api_url)
-    response = client.embeddings.create(input=DOCUMENTS, model=model_id)
-    return response.data[0].embedding
+def rerank():
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}",
+    }
 
+    data = {
+        "model": model_id,
+        "query": QUERY,
+        "documents": DOCUMENTS,
+    }
+    response = requests.post(api_url, headers=headers, json=data)
 
-def encode_queries():
-    client = OpenAI(api_key=api_key, base_url=api_url)
-    response = client.embeddings.create(input=QUERIES, model=model_id)
-    return response.data[0].embedding
+    if response.status_code == 200:
+        print("Request successful!")
+        print(json.dumps(response.json(), indent=2))
+    else:
+        print(f"Request failed with status code: {response.status_code}")
+        print(response.text)
+    return response.json()
 
 
 if __name__ == "__main__":
-    print(encode_documents())
-    print(encode_queries())
+    rerank()
