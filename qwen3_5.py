@@ -180,8 +180,8 @@ def chat_structured_oai():
     print("Is valid JSON:\n", CityInfo.model_validate(parsed))
 
 
-def run_image():
-    image_file = "example_data/city.jpg"
+def run_image_file():
+    image_file = "example_data/E6ygvPje4dy8idzA_6db3H.png"
     image_base64 = encode_base64_content_from_file(image_file)
     messages = [
         {
@@ -190,7 +190,7 @@ def run_image():
                 {
                     "type": "image_url",
                     "image_url": {
-                        "url": f"data:video/jpg;base64,{image_base64}"
+                        "url": f"data:image/png;base64,{image_base64}"
                     }
                 },
                 {
@@ -200,6 +200,22 @@ def run_image():
             ]
         }
     ]
+
+    response = client.chat.completions.create(
+        model="Qwen/Qwen3.5-27B",
+        messages=messages,
+        max_tokens=81920,
+        temperature=1.0,
+        top_p=0.95,
+        presence_penalty=1.5,
+        extra_body={
+            "top_k": 20,
+        }, 
+    )
+    result = response.choices[0].message.content
+    reasoning = response.choices[0].message.reasoning
+    print("Reasoning steps:\n", reasoning)
+    print("Chat completion output:\n", result)
 
     response = client.chat.completions.create(
         model="Qwen/Qwen3.5-27B",
@@ -295,7 +311,7 @@ if __name__ == "__main__":
     print("=== Test Chat with structured output using OAI response format ===")
     chat_structured_oai()
     print("\n=== Test Image with thinking enabled ===")
-    run_image()
+    run_image_file()
     print("\n=== Test Video with thinking enabled ===")
     run_video()
     print("\n=== Test Video with thinking disabled ===")
