@@ -1,7 +1,6 @@
 import base64
 import os
 
-import httpx
 import truststore
 from openai import OpenAI
 import pydantic
@@ -11,11 +10,9 @@ truststore.inject_into_ssl()
 os.environ['no_proxy'] = os.environ.get("api_url", "").replace("https://", "").split("/")[0]
 API_URL = os.environ.get("api_url")
 api_key = "{}".format(os.environ.get("API_KEY", "0"))
-http_client = httpx.Client(verify=False)
 client = OpenAI(
     base_url=API_URL,
     api_key=api_key,
-    http_client=http_client,
 )
 models = client.models.list()
 MODEL_ID = models.data[0].id
