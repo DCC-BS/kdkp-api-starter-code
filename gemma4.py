@@ -32,6 +32,39 @@ def encode_base64_content_from_file(file_path: str) -> str:
 
     return result
 
+
+def chat_stream():
+    messages = [
+        {"role": "user", "content": "Type \"Das DCC hilft dir mit KI.\" backwards"},
+    ]
+
+    response_stream = client.chat.completions.create(
+        model=MODEL_ID,
+        messages=messages,
+        max_tokens=60000,
+        temperature=1.0,
+        top_p=0.95,
+        stream=True,
+        extra_body={
+            "top_k": 64,
+            "chat_template_kwargs": {"enable_thinking": True},
+        }, 
+    )
+    chunks_rendered_so_far = 0
+
+    print("Reasoning steps:")
+    for chunk in response_stream:
+        # Check for reasoning/thinking tokens depending on your specific backend's chunk structure
+        if hasattr(chunk.choices[0].delta, 'reasoning') and chunk.choices[0].delta.reasoning:
+            print(chunk.choices[0].delta.reasoning, end="", flush=True)
+        # Standard content chunks
+        elif chunk.choices[0].delta.content:
+            # If transitioning to content, you might want to add a visual separator
+            if chunks_rendered_so_far == 0:
+                print("\n\nChat completion output:")
+            print(chunk.choices[0].delta.content, end="", flush=True)
+    print("\n")
+
 def chat_think():
     messages = [
         {"role": "user", "content": "Type \"Das DCC hilft dir mit KI.\" backwards"},
@@ -40,7 +73,7 @@ def chat_think():
     chat_response = client.chat.completions.create(
         model=MODEL_ID,
         messages=messages,
-        max_tokens=81920,
+        max_tokens=60000,
         temperature=1.0,
         top_p=0.95,
         extra_body={
@@ -296,6 +329,8 @@ def run_video_no_think() -> None:
 
 
 if __name__ == "__main__":
+    print("=== Test Chat Streaming with thinking enabled ===")
+    chat_stream()
     print("=== Test Chat with thinking enabled ===")
     chat_think()
     print("=== Test Chat with thinking disabled ===")
