@@ -10,6 +10,7 @@
 - [Structured Output](#structured-output)
 - [Tool Use](#tool-use)
 - [Dots OCR](#dots-ocr)
+- [Docling](#docling)
 - [Notes](#notes)
 - [License](#license)
 
@@ -19,6 +20,7 @@ This repository provides starter code to interact with:
 - Embeddings and reranking endpoints
 - Whisper (audio transcription/translation) served via BentoML
 - Simple OCR with images/PDFs routed to a VLM endpoint
+- Docling Serve for document conversion and chunking
 
 ## Brief Description of the Files
 
@@ -29,6 +31,9 @@ This repository provides starter code to interact with:
 * **llm_structured_output.py:** Structured output examples (choice, regex, JSON schema, and EBNF grammar) against an OpenAI-compatible API.
 * **llm_tool_use.py:** Tool-calling example including streamed tool call arguments.
 * **dots_ocr.py:** Minimal OCR pipeline showing image/PDF ingestion and prompting a VLM endpoint.
+* **docling_usage.py:** Document conversion via Docling Serve: pipelines, OCR engines, layout engines, picture description, input and output formats.
+* **docling_async.py:** Docling Serve async tasks: submit, poll, fetch, callbacks, websockets.
+* **docling_chunking.py:** Hybrid and hierarchical chunking via Docling Serve.
 * **pyproject.toml:** Project dependencies.
 * **LICENSE:** MIT License file.
 
@@ -54,6 +59,7 @@ This repository provides starter code to interact with:
     - LLM and embeddings: `http://localhost:8000/v1`
     - Reranker: `http://localhost:8000/rerank` (internally uses `http://localhost:8000/v1` to fetch the model)
     - Whisper via BentoML: `http://localhost:9001` (OpenAI client uses `.../v1`)
+    - Docling Serve: `http://localhost:5001/v1` (set `docling_url` in `.env`)
    - Adjust the constants in the scripts if your endpoints differ.
 
 5. **Run the example scripts:**
@@ -64,6 +70,9 @@ This repository provides starter code to interact with:
    - Structured output: `uv run --env-file .env llm_structured_output.py`
    - Tool use: `uv run --env-file .env llm_tool_use.py`
    - Dots OCR (image/PDF to VLM): `uv run --env-file .env dots_ocr.py`
+   - Docling conversion: `uv run --env-file .env docling_usage.py`
+   - Docling async tasks: `uv run --env-file .env docling_async.py`
+   - Docling chunking: `uv run --env-file .env docling_chunking.py`
 
 ## Features
 
@@ -97,6 +106,13 @@ This repository provides starter code to interact with:
         * `prompt_layout_all_en`: Output layout elements as a single JSON object, including bbox, category, and text. Use LaTeX for formulas, HTML for tables, Markdown for other text; preserve original text and reading order.
         * `prompt_layout_only_en`: Output only layout bbox and category in JSON (no text content).
         * `prompt_grounding_ocr`: Extract text within a given bounding box `[x1, y1, x2, y2]`.
+
+<a id="docling"></a>
+* **Docling Serve**
+    * `docling_usage.py`: Conversion recipes for the standard and VLM pipelines, the `rapidocr` (PP-OCRv6) and `glm-ocr-remote` OCR engines, the `ppdoclayout-v3` layout engine, Gemma 4 picture description, and the different input and output formats.
+    * `docling_async.py`: Queue a task, poll `/v1/status/poll/{task_id}`, fetch `/v1/result/{task_id}`. Also webhooks and websockets.
+    * `docling_chunking.py`: Hybrid and hierarchical chunking, including chunking of scanned documents.
+    * See [DOCLING.md](DOCLING.md) for what every model, pipeline and option does, plus curl examples.
 
 ## Notes
 
