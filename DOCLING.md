@@ -46,7 +46,7 @@ scripts read the served model id from `/v1/models`.
 
 Every request sends `Authorization: Bearer $API_KEY`. A bare docling-serve
 instance uses `X-Api-Key` instead, so swap the header if you talk to one
-directly rather than through the KDM gateway.
+directly rather than through the KDKP gateway.
 
 Then:
 
@@ -310,7 +310,7 @@ to chunk, since chunk headings come from this.
 shows. The answer goes into the document model as a picture annotation with
 `"kind": "description"`, not into the Markdown.
 
-Point it at the KDM Gemma 4 endpoint with `picture_description_custom_config`:
+Point it at the KDKP Gemma 4 endpoint with `picture_description_custom_config`:
 
 - `model_spec` describes the model. `default_repo_id` is the id docling reports.
 - `engine_options` is the HTTP call. `engine_type: "api"` means an

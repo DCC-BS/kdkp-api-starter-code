@@ -152,7 +152,7 @@ def glm_ocr_with_pp_doc_layout():
 
 
 def picture_description_gemma4():
-    """Describe every figure with Gemma 4 on the KDM vLLM endpoint.
+    """Describe every figure with Gemma 4 on the KDKP vLLM endpoint.
 
     docling posts each cropped picture to an OpenAI-compatible chat endpoint and
     writes the answer back into the document as a picture annotation. The server

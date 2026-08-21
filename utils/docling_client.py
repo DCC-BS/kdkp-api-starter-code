@@ -172,7 +172,7 @@ def vlm_model_id() -> str:
     """Model id to send to the vLLM server for picture description.
 
     Set `vlm_model` in .env to pin it, otherwise the first model the endpoint
-    lists wins. Each KDM vLLM endpoint serves exactly one model.
+    lists wins. Each KDKP vLLM endpoint serves exactly one model.
     """
     pinned = os.environ.get("vlm_model")
     if pinned:
